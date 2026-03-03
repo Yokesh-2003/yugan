@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Yugan Raja – Creative Media &amp; Performance Specialist">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Yugan Raja">
+    <meta property="og:description" content="Creative Media &amp; Performance Specialist portfolio.">
+
+    <title>Yugan Raja</title>
+    <link rel="icon" href="public/favicon.ico">
+    <script>
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+        ga('create', 'UA-105392568-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript" src="public/dat.gui.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            user-select: none;
+        }
+
+        html,
+        body {
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        body {
+            margin: 0;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .dg {
+            opacity: 0.9;
+        }
+
+        .dg .property-name {
+            overflow: visible;
+        }
+
+        .promo {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: auto;
+            color: lightblue;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* OVERLAY */
+        .overbg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            pointer-events: none;
+            text-align: center;
+            mix-blend-mode: difference;
+        }
+
+        .title {
+            font-family: "Montserrat", sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: white;
+            white-space: nowrap;
+            width: 100vw;
+        }
+
+        .subtitle {
+            font-family: "Montserrat", sans-serif;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            letter-spacing: 0.35em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 458px) {
+            .title {
+                font-size: 35px;
+                letter-spacing: 0.1em;
+                white-space: nowrap;
+            }
+
+            .subtitle {
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                margin-top: 8px;
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.4;
+            }
+        }
+
+        .cta {
+            font-family: "Montserrat", sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 999px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            transition: border 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .cta:hover {
+            border-color: rgb(255, 255, 255);
+        }
+
+        .cta-text {
+            transition: transform 0.35s ease;
+        }
+
+        .cta-arrow {
+            display: inline-block;
+            transform: translateX(-6px);
+            opacity: 0;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        .cta:hover .cta-text {
+            transform: translateX(-3px);
+        }
+
+        .cta:hover .cta-arrow {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overbg">
+        <h1 class="title">YUGAN RAJA</h1>
+        <p class="subtitle">CREATIVE MEDIA &amp; PERFORMANCE SPECIALIST</p>
+        <a href="portfolio.html" class="cta">
+            <span class="cta-text">Portfolio</span>
+            <span class="cta-arrow">&#8594;</span>
+        </a>
+    </div>
+
+    <canvas></canvas>
+
+    <script src="public/script.js"></script>
+
+    <script>
+        document.querySelector('.cta').addEventListener('click', function (e) {
+            e.preventDefault();
+            var link = this.getAttribute('href');
+            document.body.style.transition = 'opacity 0.6s ease-out';
+            document.body.style.opacity = '0';
+            setTimeout(function () {
+                window.location.href = link;
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

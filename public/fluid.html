@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="A WebGL fluid simulation that works in mobile browsers.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Webgl Fluid Simulation">
+    <meta property="og:description" content="A WebGL fluid simulation that works in mobile browsers.">
+
+    <script type="text/javascript" src="dat.gui.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'iconfont';
+            src: url('iconfont.ttf') format('truetype');
+        }
+
+        * {
+            user-select: none;
+        }
+
+        html,
+        body {
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        body {
+            margin: 0;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .dg {
+            opacity: 0.9;
+        }
+
+        .dg .property-name {
+            overflow: visible;
+        }
+
+        .bigFont {
+            font-size: 150%;
+            color: #8C8C8C;
+        }
+
+        .cr.function.appBigFont {
+            font-size: 150%;
+            line-height: 27px;
+            color: #A5F8D3;
+            background-color: #023C40;
+        }
+
+        .cr.function.appBigFont .property-name {
+            float: none;
+        }
+
+        .cr.function.appBigFont .icon {
+            position: sticky;
+            bottom: 27px;
+        }
+
+        .icon {
+            font-family: 'iconfont';
+            font-size: 130%;
+            float: right;
+        }
+
+        .twitter:before {
+            content: 'a';
+        }
+
+        .github:before {
+            content: 'b';
+        }
+
+        .app:before {
+            content: 'c';
+        }
+
+        .discord:before {
+            content: 'd';
+        }
+
+        .promo {
+            display: none;
+            /* display: table; */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: auto;
+            color: lightblue;
+            background-color: rgba(0, 0, 0, 0.4);
+            animation: promo-appear-animation 0.35s ease-out;
+        }
+
+        .promo-middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .promo-content {
+            width: 80vw;
+            height: 80vh;
+            max-width: 80vh;
+            max-height: 80vw;
+            margin: auto;
+            padding: 0;
+            font-size: 2.8vmax;
+            font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+            text-align: center;
+            background-image: url("promo_back.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .promo-header {
+            height: 10%;
+            padding: 2px 16px;
+        }
+    </style>
+    <script>
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+        ga('create', 'UA-105392568-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
+</head>
+
+<body>
+    <!-- OVERLAY CONTENT -->
+    <style>
+        .overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            align-items: center;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        /* NAME */
+        .title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            color: rgb(255, 255, 255);
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+
+        /* SUBTITLE */
+        .subtitle {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            letter-spacing: 0.35em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* CTA */
+        .cta {
+            margin-top: 4rem;
+            padding: 12px 28px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            pointer-events: auto;
+        }
+
+        .cta:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ANIMATION */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <!-- OVERLAY CONTENT -->
+    <style>
+        .overbg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* 🔥 perfect center */
+            z-index: 100;
+            pointer-events: none;
+            text-align: center;
+            mix-blend-mode: difference;
+
+        }
+
+        /* 🔥 ONLY NAME WILL BLEND */
+        .title {
+            font-family: "Montserrat", sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: white;
+            white-space: nowrap;
+            width: 100vw;
+        }
+
+        /* ❌ NORMAL – NO BLEND */
+        .subtitle {
+            font-family: "Montserrat", sans-serif;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            letter-spacing: 0.35em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 458px) {
+            .title {
+                font-size: 35px;
+                /* change as you like */
+                letter-spacing: 0.1em;
+                /* tighter for mobile */
+                white-space: nowrap;
+                /* 🔥 one line guaranteed */
+            }
+
+            .subtitle {
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                margin-top: 8px;
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.4;
+            }
+        }
+
+        .cta {
+            font-family: "Montserrat", sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 999px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            transition: border 0.3s ease;
+        }
+
+        .cta:hover {
+            border-color: rgb(255, 255, 255);
+        }
+
+        .cta-text {
+            transition: transform 0.35s ease;
+            align-items: center;
+        }
+
+        .cta-arrow {
+            display: inline-block;
+            transform: translateX(-6px);
+            opacity: 0;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        /* 🔥 Arrow Slide Animation */
+        .cta:hover .cta-text {
+            transform: translateX(-3px);
+        }
+
+        .cta:hover .cta-arrow {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+
+    <div class="overbg">
+        <h1 class="title">YUGAN RAJA</h1>
+        <p class="subtitle">CREATIVE MEDIA & PERFORMANCE SPECIALIST</p>
+        <a href="../portfolio.html" class="cta">
+            <span class="cta-text">Portfolio</span>
+            <span class="cta-arrow">→</span>
+        </a>
+    </div>
+
+
+    <canvas></canvas>
+
+    <script src="./script.js"></script>
+
+    <script>
+        document.querySelector('.cta').addEventListener('click', function (e) {
+            e.preventDefault();
+            const link = this.getAttribute('href');
+            document.body.style.transition = 'opacity 0.6s ease-out';
+            document.body.style.opacity = '0';
+            setTimeout(function () {
+                window.location.href = link;
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>
