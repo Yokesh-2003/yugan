@@ -4,21 +4,6 @@
     {
       "source": "/",
       "destination": "/public/fluid.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/$1.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
     }
   ]
 }
