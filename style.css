@@ -342,6 +342,11 @@ img {
   height: 3rem;
 }
 
+.social-bar a[aria-label="Play"] svg {
+  width: 3.8rem;
+  height: 3.8rem;
+}
+
 /* ─── Social Bar – mobile ─── */
 @media (max-width: 500px) {
   .social-bar-wrap {
@@ -356,6 +361,11 @@ img {
   .social-bar svg {
     width: 2.4rem;
     height: 2.4rem;
+  }
+
+  .social-bar a[aria-label="Play"] svg {
+    width: 3.2rem;
+    height: 3.2rem;
   }
 }
 
@@ -1299,6 +1309,162 @@ textarea.contact-input {
 
 .contact-submit:hover .contact-submit-arrow {
   transform: translateX(4px);
+}
+
+/* ─── LIQUID GLASS VIDEO MODAL (SCROLLABLE REELS) ─── */
+.video-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.video-modal-overlay.open {
+  display: flex;
+  opacity: 1;
+}
+
+.video-modal-content {
+  position: relative;
+  width: auto;
+  height: 90vh;
+  aspect-ratio: 9/16;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+  transform: scale(0.9) translateY(30px);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.video-modal-overlay.open .video-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+/* Scrollable Feed Container */
+.video-feed-container {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.video-feed-container::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-slide {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.reel-slide video {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  /* 16:9 plays like half-screen, 9:16 fits normally */
+}
+
+.video-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.video-modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* Scroll Hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  z-index: 110;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  white-space: nowrap;
+}
+
+.scroll-hint.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-hint span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.scroll-hint svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: hint-bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes hint-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* Mobile Tweaks */
+@media (max-width: 500px) {
+  .video-modal-content {
+    height: 80vh;
+    width: 90%;
+    aspect-ratio: 9/16;
+  }
 }
 
 .contact-footer-copy {

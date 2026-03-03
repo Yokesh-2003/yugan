@@ -362,3 +362,115 @@ function handleContactSubmit(e) {
     window.addEventListener('load', updateMobileAnimations);
 })();
 
+// ─── 7. SCROLLABLE REELS FEED LOGIC ─────────────────────────────────────────
+(function () {
+    const videoModal = document.getElementById('video-modal');
+    const modalClose = document.getElementById('video-modal-close');
+    const videoFeed = document.getElementById('video-feed');
+    const playBtn = document.querySelector('.social-bar a[aria-label="Play"]');
+    const scrollHint = document.getElementById('scroll-hint');
+
+    if (!videoModal || !playBtn || !videoFeed) return;
+
+    // Intersection Observer to handle play/pause on scroll
+    const observerOptions = {
+        root: videoFeed,
+        threshold: 0.6 // Video must be 60% visible to play
+    };
+
+    const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target.querySelector('video');
+            if (entry.isIntersecting) {
+                video.play().catch(() => { });
+            } else {
+                video.pause();
+                video.currentTime = 0; // Optional: reset video when scrolled away
+            }
+        });
+    }, observerOptions);
+
+    // Observe all slides
+    const slides = videoFeed.querySelectorAll('.reel-slide');
+    slides.forEach(slide => videoObserver.observe(slide));
+
+    function shuffleVideos() {
+        const slidesArray = Array.from(videoFeed.querySelectorAll('.reel-slide'));
+        // Fisher-Yates shuffle
+        for (let i = slidesArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [slidesArray[i], slidesArray[j]] = [slidesArray[j], slidesArray[i]];
+        }
+        slidesArray.forEach(slide => videoFeed.appendChild(slide));
+    }
+
+    let hintTimeout;
+
+    // Open Modal
+    playBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Shuffle videos for random order
+        shuffleVideos();
+
+        videoModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        // Show scroll hint
+        if (scrollHint) {
+            scrollHint.classList.add('show');
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(() => {
+                scrollHint.classList.remove('show');
+            }, 10000);
+        }
+
+        // Ensure new first video starts playing
+        const newSlides = videoFeed.querySelectorAll('.reel-slide');
+        const firstVideo = newSlides[0].querySelector('video');
+        if (firstVideo) firstVideo.play().catch(() => { });
+    });
+
+    // Close Modal
+    function closeModal() {
+        videoModal.classList.remove('open');
+        document.body.style.overflow = '';
+
+        // Hide scroll hint immediately
+        if (scrollHint) scrollHint.classList.remove('show');
+        clearTimeout(hintTimeout);
+
+        // Stop all videos
+        slides.forEach(slide => {
+            const v = slide.querySelector('video');
+            v.pause();
+            v.currentTime = 0;
+        });
+
+        // Reset scroll position to top
+        videoFeed.scrollTop = 0;
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    videoModal.addEventListener('click', function (e) {
+        if (e.target === videoModal) closeModal();
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && videoModal.classList.contains('open')) closeModal();
+    });
+
+    // Toggle mute on click within the reel (Disabled per user request for unmuted autoplay)
+    /* videoFeed.addEventListener('click', function (e) {
+        if (e.target.tagName === 'VIDEO') {
+            e.target.muted = !e.target.muted;
+        }
+    }); */
+
+    // Set all videos to full volume initially
+    slides.forEach(slide => {
+        const v = slide.querySelector('video');
+        if (v) v.volume = 1;
+    });
+})();
