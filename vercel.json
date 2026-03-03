@@ -1,7 +1,14 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/$1.html" }
+    {
+      "source": "/",
+      "destination": "/public/fluid.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1.html"
+    }
   ],
   "headers": [
     {
